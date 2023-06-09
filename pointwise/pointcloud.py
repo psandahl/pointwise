@@ -32,10 +32,10 @@ class PointCloud(pd.DataFrame):
         super().__init__(data=data, columns=columns)
 
         self._num_points = len(self)
-        self._initial_columns = columns
 
     @staticmethod
-    def from_xyz(path: pathlib.Path, columns: List[str]) -> PointCloud:
+    def from_xyz(path: pathlib.Path,
+                 columns: List[str] = ['x', 'y', 'z']) -> PointCloud:
         """
         Create a PointCloud from an xyz file.
         """
@@ -43,23 +43,39 @@ class PointCloud(pd.DataFrame):
                                           dtype=np.float64), columns=columns)
 
     @staticmethod
-    def from_npy(path: pathlib.Path, columns: List[str]) -> PointCloud:
+    def from_npy(path: pathlib.Path,
+                 columns: List[str] = ['x', 'y', 'z']) -> PointCloud:
         """
         Create a PointCloud from an npy file.
         """
         return PointCloud(data=np.load(path), columns=columns)
 
-    def save_xyz(self: PointCloud, path: pathlib.Path) -> None:
+    @staticmethod
+    def from_file(path: pathlib.Path,
+                  columns: List[str] = ['x', 'y', 'z']) -> PointCloud:
+        """
+        Create a PointCloud from file.
+        """
+        if path.suffix == '.xyz':
+            return PointCloud.from_xyz(path=path, columns=columns)
+        elif path.suffix == '.npy':
+            return PointCloud.from_npy(path=path, columns=columns)
+        else:
+            raise PointCloud(f"File suffix must be '.xyz' or '.npy'")
+
+    def save_xyz(self: PointCloud, path: pathlib.Path,
+                 columns: List[str] = ['x', 'y', 'z']) -> None:
         """
         Save the PointCloud to an xyz file using same columns as created with.
         """
-        np.savetxt(path, self[self._initial_columns].to_numpy(), fmt='%.6f')
+        np.savetxt(path, self[columns].to_numpy(), fmt='%.6f')
 
-    def save_npy(self: PointCloud, path: pathlib.Path) -> None:
+    def save_npy(self: PointCloud, path: pathlib.Path,
+                 columns: List[str] = ['x', 'y', 'z']) -> None:
         """
         Save the PointCloud to an npy file using same columns as created with.
         """
-        np.save(path, self[self._initial_columns].to_numpy())
+        np.save(path, self[columns].to_numpy())
 
 
 class PointCloudException(Exception):
