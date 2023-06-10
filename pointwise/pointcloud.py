@@ -77,6 +77,12 @@ class PointCloud(pd.DataFrame):
         """
         np.save(path, self[columns].to_numpy())
 
+    def num_points(self: PointCloud) -> int:
+        """
+        Get the number of of points in the PointCloud.
+        """
+        return self._num_points
+
 
 class PointCloudException(Exception):
     """PointCloud exception"""
