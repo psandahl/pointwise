@@ -12,9 +12,17 @@ class ICP:
         """
         Create a fresh ICP instance without any point clouds set.
         """
+        # Point cloud references.
         self._ref = None
         self._qry = None
 
+        # ICP parameters.
+        self._initial_rotation = np.array([0., 0., 0.])
+        self._initial_translation = np.array([0., 0., 0.])
+        self._correspondences = 1000
+        self._iterations = 100
+
+        # Timing values.
         self._start_time = None
         self._finish_time = None
 
@@ -34,12 +42,31 @@ class ICP:
         print(
             f'ICP.set_point_clouds: reference={self._ref.num_points()} pts, query={self._qry.num_points()} pts')
 
-    def run(self: ICP,
-            initial_rotation: ArrayLike = [0., 0., 0.],
-            initial_translation: ArrayLike = [0., 0., 0.],
-            correspondences: int = 1000,
-            iterations: int = 100
-            ) -> None:
+    def set_initial_rotation(self: ICP, rotation: ArrayLike) -> None:
+        """
+        Set the initial rotation in degrees (default: 0., 0., 0.).
+        """
+        self._initial_rotation = np.array(rotation)
+
+    def set_initial_translation(self: ICP, translation: ArrayLike) -> None:
+        """
+        Set the initial translation (default: 0., 0., 0.).
+        """
+        self._initial_translation = np.array(translation)
+
+    def set_correspondences(self: ICP, correspondences: int) -> None:
+        """
+        Set the number of correspondences selected in the reference cloud (default: 1000).
+        """
+        self._correspondences = correspondences
+
+    def set_iterations(self: ICP, iterations: int) -> None:
+        """
+        Set the number of ICP iterations.
+        """
+        self._iterations = iterations
+
+    def run(self: ICP) -> None:
         """
         Run the ICP algorithm.
         """
