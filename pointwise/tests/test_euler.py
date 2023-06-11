@@ -3,6 +3,7 @@ from __future__ import annotations
 from pointwise.euler import euler_to_matrix, matrix_to_euler
 from pointwise.euler import homogeneous_matrix_euler, H_transform
 
+import numpy as np
 from numpy.testing import assert_array_almost_equal
 import unittest
 
@@ -27,7 +28,17 @@ class TestEuler(unittest.TestCase):
         H = homogeneous_matrix_euler(ypr=(0., 0., 0.), t=t)
         self.assertEqual(H.shape, (4, 4))
 
-        X = 0., 0., 0.
+        # Test transforming a single point.
+        X = np.array([0., 0., 0.])
         Xt = H_transform(H, X)
-        self.assertEqual(Xt.shape, (3,))
+        self.assertEqual(Xt.shape, X.shape)
         assert_array_almost_equal(Xt, t)
+
+        # Test transforming an array of points.
+        X = np.array([
+            [0., 0., 0.],
+            [10., 10., 10.]
+        ])
+        Xt = H_transform(H, X)
+        self.assertEqual(Xt.shape, X.shape)
+        assert_array_almost_equal(Xt, X + t)

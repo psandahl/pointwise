@@ -77,21 +77,32 @@ def homogeneous_matrix(R: NDArray, t: ArrayLike) -> NDArray:
     return H
 
 
-def H_transform(H: NDArray, X: ArrayLike) -> NDArray:
+def H_transform(H: NDArray, X: NDArray) -> NDArray:
     """
-    Transform a coordinate using the honogeneous matrix.
+    Transform point(s) using the honogeneous matrix.
 
     Parameters:
         H: Homogeneous matrix.
-        X: 3D coordinate.
+        X: Single 3D point or (n, 3) array of points.
 
     Returns:
-        Transformed 3D coordinate.
+        Transformed 3D point(s).
     """
-    Xt = H @ np.append(X, 1.)
-    Xt /= Xt[3]
+    if len(X.shape) == 1:
+        Xt = H @ np.append(X, 1.)
+        Xt /= Xt[3]
 
-    return Xt[:3]
+        return Xt[:3]
+    elif len(X.shape) == 2:
+        items, _ = X.shape
+
+        X = np.hstack((X, np.ones((items, 1), dtype=np.float64)))
+        Xt = np.transpose(H @ X.T)
+        Xt /= Xt[0, 3]
+
+        return Xt[:, :3]
+    else:
+        raise EulerException('Non-supported shape of X')
 
 
 def euler_xyz_to_matrix(ypr: ArrayLike) -> NDArray:
