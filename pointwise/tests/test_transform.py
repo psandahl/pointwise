@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from pointwise.euler import euler_to_matrix, matrix_to_euler
-from pointwise.euler import homogeneous_matrix_euler, H_transform
+from pointwise.transform import euler_to_matrix, matrix_to_euler
+from pointwise.transform import homogeneous_matrix_euler, H_transform
 
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 import unittest
 
 
-class TestEuler(unittest.TestCase):
-    def test_euler_xyz(self: TestEuler) -> None:
+class TestTransform(unittest.TestCase):
+    def test_euler_xyz(self: TestTransform) -> None:
         ypr = (0., 0., 0.)
 
         R = euler_to_matrix(ypr=ypr, axis_order='xyz')
@@ -22,7 +22,7 @@ class TestEuler(unittest.TestCase):
         self.assertEqual(R.shape, (3, 3))
         assert_array_almost_equal(matrix_to_euler(R, axis_order='xyz'), ypr)
 
-    def test_homogeneous_matrix(self: TestEuler) -> None:
+    def test_homogeneous_matrix(self: TestTransform) -> None:
         t = 123., 456., 789.
 
         H = homogeneous_matrix_euler(ypr=(0., 0., 0.), t=t)

@@ -19,7 +19,7 @@ def euler_to_matrix(ypr: ArrayLike, axis_order: str = 'xyz') -> NDArray:
     if axis_order == 'xyz':
         return euler_xyz_to_matrix(ypr)
     else:
-        raise EulerException(
+        raise TransformException(
             f"'{axis_order}' is not an implemented axis order")
 
 
@@ -37,7 +37,7 @@ def matrix_to_euler(R: NDArray, axis_order: str = 'xyz') -> NDArray:
     if axis_order == 'xyz':
         return matrix_to_euler_xyz(R)
     else:
-        raise EulerException(
+        raise TransformException(
             f"'{axis_order}' is not an implemented axis order")
 
 
@@ -102,7 +102,7 @@ def H_transform(H: NDArray, X: NDArray) -> NDArray:
 
         return Xt[:, :3]
     else:
-        raise EulerException('Non-supported shape of X')
+        raise TransformException('Non-supported shape of X')
 
 
 def euler_xyz_to_matrix(ypr: ArrayLike) -> NDArray:
@@ -140,5 +140,5 @@ def matrix_to_euler_xyz(R: NDArray) -> NDArray:
     return np.array((theta_x, theta_y, theta_z))
 
 
-class EulerException(Exception):
-    """Euler exception"""
+class TransformException(Exception):
+    """Transform exception"""
