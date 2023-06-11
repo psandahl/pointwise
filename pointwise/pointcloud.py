@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .transform import H_transform
+
 import numpy as np
 from numpy.typing import NDArray
 import pandas as pd
@@ -63,17 +65,33 @@ class PointCloud(pd.DataFrame):
         else:
             raise PointCloud(f"File suffix must be '.xyz' or '.npy'")
 
+    def X(self: PointCloud) -> NDArray:
+        """
+        Get all points x, y and z.
+        """
+        return self[['x', 'y', 'z']].to_numpy()
+
+    def rigid_body_transform(self: PointCloud, H: NDArray) -> None:
+        """
+        Perform a rigid body transform of the PointCloud using the
+        homogenous matrix.        
+        """
+        Xt = H_transform(H, self.X())
+        self['x'] = Xt[:, 0]
+        self['y'] = Xt[:, 1]
+        self['z'] = Xt[:, 2]
+
     def save_xyz(self: PointCloud, path: pathlib.Path,
                  columns: List[str] = ['x', 'y', 'z']) -> None:
         """
-        Save the PointCloud to an xyz file using same columns as created with.
+        Save the PointCloud to an xyz file using the provided columns.
         """
         np.savetxt(path, self[columns].to_numpy(), fmt='%.6f')
 
     def save_npy(self: PointCloud, path: pathlib.Path,
                  columns: List[str] = ['x', 'y', 'z']) -> None:
         """
-        Save the PointCloud to an npy file using same columns as created with.
+        Save the PointCloud to an npy file using the provided columns.
         """
         np.save(path, self[columns].to_numpy())
 
