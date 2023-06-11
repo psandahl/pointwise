@@ -35,6 +35,12 @@ class PointCloud(pd.DataFrame):
 
         self._num_points = len(self)
 
+        # All points are initially marked as selected
+        if 'selected' not in self:
+            self['selected'] = np.ones(self._num_points, dtype=bool)
+        else:
+            self['selected'].values[:] = True
+
     @staticmethod
     def from_xyz(path: pathlib.Path,
                  columns: List[str] = ['x', 'y', 'z']) -> PointCloud:
@@ -64,6 +70,43 @@ class PointCloud(pd.DataFrame):
             return PointCloud.from_npy(path=path, columns=columns)
         else:
             raise PointCloud(f"File suffix must be '.xyz' or '.npy'")
+
+    def select_all_points(self: PointCloud) -> None:
+        """
+        Mark all points as selected.
+        """
+        self['selected'].values[:] = True
+
+    def unselect_all_points(self: PointCloud) -> None:
+        """
+        Mark all points as unselected.
+        """
+        self['selected'].values[:] = False
+
+    def num_selected_points(self: PointCloud) -> int:
+        """
+        Count the number of selected points.
+        """
+        return sum(self['selected'])
+
+    def selected_incices(self: PointCloud) -> NDArray:
+        """
+        Get the indices for the selected points.
+        """
+        return np.where(self['selected'])[0]
+
+    def select_n_points(self: PointCloud, n: int) -> None:
+        """
+        Select n points evenly across the selected points.
+        """
+        num_selected = self.num_selected_points()
+        if num_selected > n:
+            idx_subset_n_points = np.round(
+                np.linspace(0, num_selected - 1, n)).astype(int)
+
+            idx_selected_new = self.selected_incices()[idx_subset_n_points]
+            self.unselect_all_points()
+            self.loc[idx_selected_new, 'selected'] = True
 
     def X(self: PointCloud) -> NDArray:
         """
