@@ -106,6 +106,11 @@ class ICP:
         # Save the initial selection.
         initial_selection = self._ref['selected']
 
+        # Estimate normals for the reference cloud.
+        if not self._ref.has_normals():
+            print('Estimate normals for the reference cloud')
+            self._ref.estimate_normals()
+
         self._finish_time = time.time()
         duration = self._finish_time - self._start_time
 

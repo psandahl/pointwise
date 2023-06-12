@@ -71,6 +71,12 @@ class PointCloud(pd.DataFrame):
         else:
             raise PointCloud(f"File suffix must be '.xyz' or '.npy'")
 
+    def has_normals(self: PointCloud) -> bool:
+        """
+        Check if the PointCloud has normals.
+        """
+        return {'nx', 'ny', 'nz', 'planarity'}.issubset(self)
+
     def select_all_points(self: PointCloud) -> None:
         """
         Mark all points as selected.
@@ -107,6 +113,9 @@ class PointCloud(pd.DataFrame):
             idx_selected_new = self.selected_incices()[idx_subset_n_points]
             self.unselect_all_points()
             self.loc[idx_selected_new, 'selected'] = True
+
+    def estimate_normals(self: PointCloud) -> None:
+        pass
 
     def X(self: PointCloud) -> NDArray:
         """
