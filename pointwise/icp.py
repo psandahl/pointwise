@@ -23,6 +23,7 @@ class ICP:
         self._translation = np.array([0., 0., 0.])
         self._correspondences = 1000
         self._iterations = 100
+        self._neighbors = 10
 
         # Timing values.
         self._start_time = None
@@ -109,7 +110,12 @@ class ICP:
         # Estimate normals for the reference cloud.
         if not self._ref.has_normals():
             print('Estimate normals for the reference cloud')
-            self._ref.estimate_normals()
+            self._ref.estimate_normals(num_neighbors=self._neighbors)
+
+        print('Start iterations')
+        residuals = []
+        for i in range(self._iterations):
+            pass
 
         self._finish_time = time.time()
         duration = self._finish_time - self._start_time
